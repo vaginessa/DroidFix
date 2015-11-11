@@ -46,7 +46,7 @@ import javassist.NotFoundException;
 
 public class ClassInject {
     public static String getConstructionCode() {
-        String insert = "if (io.github.bunnyblue.droidfixcore.ClassVerifier.CLASS_ISPREVERIFIED) {\n"
+        String insert = "if (io.github.bunnyblue.droidfix.ClassVerifier.CLASS_ISPREVERIFIED) {\n"
                 + "			System.out.println(io.github.bunnyblue.droidfix.AntilazyLoad.class);\n" + "		}";
         return insert;
 
@@ -58,7 +58,7 @@ public class ClassInject {
         try {
             ClassPath mClassPath = ClassPool.getDefault()
                     .appendClassPath(Configure.getInstance().getTransformedClassDir());
-            System.err.println("update class "+Configure.getInstance().getTransformedClassDir());
+            //System.err.println("update class "+Configure.getInstance().getTransformedClassDir());
         } catch (NotFoundException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -76,10 +76,10 @@ public class ClassInject {
                             .append("}");
                     ctConstructor.setBody(buffer2.toString());
                     ctClass.addConstructor(ctConstructor);
-                    System.out.println("add new constructor "+ctClass.getName());
+                   // System.out.println("add new constructor "+ctClass.getName());
                 }else {
                     for (CtConstructor ctConstructor : conts) {
-                        System.err.println(ctConstructor.toString());
+                        //System.err.println(ctConstructor.toString());
                         ctConstructor.insertBeforeBody(ClassInject.getConstructionCode());
 
                     }

@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+def cacheClassesTable=true
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -16,12 +16,50 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+gradle.taskGraph.afterTask { Task task, TaskState state ->
+    if (state.failure) {
+        println "FAILED@@@@@@@@@@@@@@@@@"+task.name
+    }
+    else {
+        if ("app".equals(task.project.name)&&"transformClassesAndResourcesWithProguardForDebug".equals(task.name))
+        {
+            copy {
+                from buildDir.getAbsolutePath()+"/outputs/mapping/debug"
+                into projectDir.getAbsolutePath()+"/DroidPatch/"
+                include 'mapping.txt'
+            }
+
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "injectCode" ,projectDir.getAbsolutePath(),"debug"
+            }
+            if (cacheClassesTable){
+                javaexec {
+                    classpath "$rootDir/ClassComputer.jar"
+                    main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                    args "cacheClassesTable" ,projectDir.getAbsolutePath(),"debug"
+                }
+            }
+            File resDir=    file(buildDir.getAbsolutePath()+"/intermediates/res/merged/release")
+
+
+
+
+        }
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.0'
     compile 'com.android.support:design:23.1.0'
+    compile project(':droidfixcore')
 }

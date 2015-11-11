@@ -15,3 +15,8 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-keep public class io.github.bunnyblue.droidfix.ClassVerifier {
+    *;
+}
+-keep class android.support.v7.widget.**{*;}
+-keep class android.support.design.widget.**{*;}
