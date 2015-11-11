@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
-            Toast.makeText(MainActivity.this,"fix" ,Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this,"fixdebug" ,Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_send) {
 

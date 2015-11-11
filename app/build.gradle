@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
-def cacheClassesTable=false
-def diffPatch=true
+def useDebugFix=true
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -21,48 +21,132 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        releaseDroidFix {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro','proguard-droidfix.pro'
+            signingConfig buildTypes.debug.signingConfig
+        }
+        debugDroidFix {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro','proguard-droidfix.pro'
+            signingConfig buildTypes.debug.signingConfig
+        }
     }
 }
-gradle.taskGraph.afterTask { Task task, TaskState state ->
-    if (state.failure) {
-        println "FAILED@@@@@@@@@@@@@@@@@"+task.name
-    }
-    else {
-        if ("app".equals(task.project.name)&&"transformClassesAndResourcesWithProguardForDebug".equals(task.name))
-        {
+gradle.taskGraph.beforeTask { Task task ->
+    if ("app".equals(task.project.name)&&"transformClassesAndResourcesWithProguardForDebug".equals(task.name)&&useDebugFix)
+    {
+        task.doLast {
             copy {
                 from buildDir.getAbsolutePath()+"/outputs/mapping/debug"
                 into projectDir.getAbsolutePath()+"/DroidPatch/"
                 include 'mapping.txt'
             }
-
             javaexec {
                 classpath "$rootDir/ClassComputer.jar"
                 main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
                 args "injectCode" ,projectDir.getAbsolutePath(),"debug"
             }
-            if (cacheClassesTable){
                 javaexec {
                     classpath "$rootDir/ClassComputer.jar"
                     main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
                     args "cacheClassesTable" ,projectDir.getAbsolutePath(),"debug"
                 }
-            }
-            if (diffPatch){
-                javaexec {
-                    classpath "$rootDir/ClassComputer.jar"
-                    main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
-                    args "diffPatch" ,projectDir.getAbsolutePath(),"debug"
-                }
-            }
-            File resDir=    file(buildDir.getAbsolutePath()+"/intermediates/res/merged/release")
-
-
 
 
         }
+    }else  if ("app".equals(task.project.name)&&"transformClassesAndResourcesWithProguardForRelease".equals(task.name)){
+
+        task.doLast {
+            copy {
+                from buildDir.getAbsolutePath() + "/outputs/mapping/release"
+                into projectDir.getAbsolutePath() + "/DroidPatch/"
+                include 'mapping.txt'
+            }
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "injectCode", projectDir.getAbsolutePath(), "release"
+            }
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "cacheClassesTable", projectDir.getAbsolutePath(), "release"
+            }
+
+        }
+    }else  if ("app".equals(task.project.name)&&"transformClassesAndResourcesWithProguardForDebugDroidFix".equals(task.name)){
+        task.doLast {
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "injectCode", projectDir.getAbsolutePath(), "debugDroidFix"
+            }
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "diffPatch", projectDir.getAbsolutePath(), "debugDroidFix"
+            }
+        }
+
+    }else  if ("app".equals(task.project.name)&&"transformClassesAndResourcesWithProguardForReleaseDroidFix".equals(task.name)){
+        task.doLast {
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "injectCode", projectDir.getAbsolutePath(), "releaseDroidFix"
+            }
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "diffPatch", projectDir.getAbsolutePath(), "releaseDroidFix"
+            }
+
+        }
     }
+    //
+
 }
+//gradle.taskGraph.afterTask { Task task, TaskState state ->
+//    if (state.failure) {
+//        println "FAILED@@@@@@@@@@@@@@@@@"+task.name
+//    }
+//    else {
+//        if ("app".equals(task.project.name)&&"transformClassesAndResourcesWithProguardForDebug".equals(task.name))
+//        {
+//            copy {
+//                from buildDir.getAbsolutePath()+"/outputs/mapping/debug"
+//                into projectDir.getAbsolutePath()+"/DroidPatch/"
+//                include 'mapping.txt'
+//            }
+//
+//            javaexec {
+//                classpath "$rootDir/ClassComputer.jar"
+//                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+//                args "injectCode" ,projectDir.getAbsolutePath(),"debug"
+//            }
+//            if (cacheClassesTable){
+//                javaexec {
+//                    classpath "$rootDir/ClassComputer.jar"
+//                    main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+//                    args "cacheClassesTable" ,projectDir.getAbsolutePath(),"debug"
+//                }
+//            }
+//            if (diffPatch){
+//                javaexec {
+//                    classpath "$rootDir/ClassComputer.jar"
+//                    main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+//                    args "diffPatch" ,projectDir.getAbsolutePath(),"debug"
+//                }
+//            }
+//            File resDir=    file(buildDir.getAbsolutePath()+"/intermediates/res/merged/release")
+//
+//
+//
+//
+//        }
+//    }
+//}
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
