@@ -1,5 +1,7 @@
 # DroidFix
 
+[![Join the chat at https://gitter.im/bunnyblue/DroidFix](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/bunnyblue/DroidFix?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 # MoreInfo
 [详细原理](https://mp.weixin.qq.com/s?__biz=MzI1MTA1MzM2Nw==&mid=400118620&idx=1&sn=b4fdd5055731290eef12ad0d17f39d4a&scene=1&srcid=1106Imu9ZgwybID13e7y2nEi#wechat_redirect)
 
