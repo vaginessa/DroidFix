@@ -1,1 +1,1 @@
-include ':app', ':droidfixcore'
+include ':app', ':droidfixcore', ':AntilazyLoad'

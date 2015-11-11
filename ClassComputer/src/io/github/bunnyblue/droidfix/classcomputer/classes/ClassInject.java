@@ -47,7 +47,7 @@ import javassist.NotFoundException;
 public class ClassInject {
     public static String getConstructionCode() {
         String insert = "if (io.github.bunnyblue.droidfixcore.ClassVerifier.CLASS_ISPREVERIFIED) {\n"
-                + "			System.out.println(io.github.bunnyblue.droidfixcore..AntilazyLoad.class);\n" + "		}";
+                + "			System.out.println(io.github.bunnyblue.droidfix.AntilazyLoad.class);\n" + "		}";
         return insert;
 
     }
