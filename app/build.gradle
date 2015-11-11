@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
-def cacheClassesTable=true
+def cacheClassesTable=false
+def diffPatch=true
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -45,6 +46,13 @@ gradle.taskGraph.afterTask { Task task, TaskState state ->
                     classpath "$rootDir/ClassComputer.jar"
                     main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
                     args "cacheClassesTable" ,projectDir.getAbsolutePath(),"debug"
+                }
+            }
+            if (diffPatch){
+                javaexec {
+                    classpath "$rootDir/ClassComputer.jar"
+                    main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                    args "diffPatch" ,projectDir.getAbsolutePath(),"debug"
                 }
             }
             File resDir=    file(buildDir.getAbsolutePath()+"/intermediates/res/merged/release")

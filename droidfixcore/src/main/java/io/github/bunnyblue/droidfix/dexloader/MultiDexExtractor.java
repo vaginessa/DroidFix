@@ -331,6 +331,41 @@ List<File> files;
             tmp.delete(); // return status ignored
         }
     }
+//    private static void extract(ZipFile apk, ZipEntry dexFile, File extractTo) throws IOException, FileNotFoundException {
+//
+//        InputStream in = apk.getInputStream(dexFile);
+//        ZipOutputStream out = null;
+//        File tmp = File.createTempFile("droidfix", EXTRACTED_SUFFIX,
+//                extractTo.getParentFile());
+//        Log.i(TAG, "Extracting " + tmp.getPath());
+//        try {
+//            out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(tmp)));
+//            try {
+//                ZipEntry classesDex = new ZipEntry("classes.dex");
+//                // keep zip entry time since it is the criteria used by Dalvik
+//                classesDex.setTime(dexFile.getTime());
+//                out.putNextEntry(classesDex);
+//
+//                byte[] buffer = new byte[BUFFER_SIZE];
+//                int length = in.read(buffer);
+//                while (length != -1) {
+//                    out.write(buffer, 0, length);
+//                    length = in.read(buffer);
+//                }
+//                out.closeEntry();
+//            } finally {
+//                out.close();
+//            }
+//            Log.i(TAG, "Renaming to " + extractTo.getPath());
+//            if (!tmp.renameTo(extractTo)) {
+//                throw new IOException("Failed to rename \"" + tmp.getAbsolutePath() +
+//                        "\" to \"" + extractTo.getAbsolutePath() + "\"");
+//            }
+//        } finally {
+//            closeQuietly(in);
+//            tmp.delete(); // return status ignored
+//        }
+//    }
 
     /**
      * Returns whether the file is a valid zip file.

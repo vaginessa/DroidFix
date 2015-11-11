@@ -23,7 +23,11 @@ import android.os.Build;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -56,7 +60,7 @@ public final class DroidFix {
     static final String TAG = "DroidFix";
 
 
-    private static final String DROID_CODE_CACHE = ".DroidFix" + File.separator +
+    public static final String DROID_CODE_CACHE = ".DroidFix" + File.separator +
         "code_cache";
 
 
@@ -65,6 +69,65 @@ public final class DroidFix {
 
 
     private DroidFix() {}
+public static  void installPatch(Context context,File  patch){
+
+    File dexDir = new File(context.getApplicationInfo().dataDir, DROID_CODE_CACHE);
+    List<File> files = new ArrayList<File>();
+    files.add(patch);
+
+    try {
+        installDex(context.getClassLoader(), dexDir, files,true);
+    } catch (IllegalAccessException e) {
+        e.printStackTrace();
+    } catch (NoSuchFieldException e) {
+        e.printStackTrace();
+    } catch (InvocationTargetException e) {
+        e.printStackTrace();
+    } catch (NoSuchMethodException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    } catch (InstantiationException e) {
+        e.printStackTrace();
+    }
+}
+    public static void copyFile(File source, File dest)
+
+            throws IOException {
+
+        InputStream input = null;
+
+        OutputStream output = null;
+        if (!dest.exists())
+        {
+            dest.createNewFile();
+        }else {return;
+        }
+        try {
+
+            input = new FileInputStream(source);
+
+            output = new FileOutputStream(dest);
+
+            byte[] buf = new byte[1024];
+
+            int bytesRead;
+
+            while ((bytesRead = input.read(buf)) > 0) {
+
+                output.write(buf, 0, bytesRead);
+
+            }
+
+        } finally {
+
+            input.close();
+
+            output.close();
+
+        }
+
+    }
 
     /**
      * Patches the application context class loader by appending extra dex files
@@ -81,8 +144,6 @@ public final class DroidFix {
 
 
         try {
-
-
             synchronized (installedApk) {
              ApplicationInfo applicationInfo=   context.getApplicationInfo();
                 String apkPath = applicationInfo.sourceDir;
@@ -90,8 +151,6 @@ public final class DroidFix {
                     return;
                 }
                 installedApk.add(apkPath);
-
-
                 ClassLoader loader;
                 try {
                     loader = context.getClassLoader();
