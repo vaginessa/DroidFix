@@ -87,6 +87,13 @@ gradle.taskGraph.beforeTask { Task task ->
                 main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
                 args "diffPatch", projectDir.getAbsolutePath(), "debugDroidFix"
             }
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "buildPkg", projectDir.getAbsolutePath(),"patch"
+            }
+
+
         }
 
     }else  if ("app".equals(task.project.name)&&"transformClassesAndResourcesWithProguardForReleaseDroidFix".equals(task.name)){
@@ -100,6 +107,11 @@ gradle.taskGraph.beforeTask { Task task ->
                 classpath "$rootDir/ClassComputer.jar"
                 main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
                 args "diffPatch", projectDir.getAbsolutePath(), "releaseDroidFix"
+            }
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "buildPkg", projectDir.getAbsolutePath(),"patch"
             }
 
         }

@@ -27,9 +27,17 @@
 
 package io.github.bunnyblue.droidfix.classcomputer;
 
+import com.android.dx.command.Main;
 import io.github.bunnyblue.droidfix.classcomputer.cache.Configure;
 import io.github.bunnyblue.droidfix.classcomputer.classes.ClassInject;
 import io.github.bunnyblue.droidfix.classcomputer.proguard.MappingMapper;
+import org.zeroturnaround.zip.ZipEntrySource;
+import org.zeroturnaround.zip.ZipUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.ZipEntry;
 
 /**
  * Created by BunnyBlue on 11/10/15.
@@ -37,6 +45,7 @@ import io.github.bunnyblue.droidfix.classcomputer.proguard.MappingMapper;
 public class ClassComputer {
     public static void main(String[] args) {
         String action = args[0];
+
         String buildRootDir = args[1];
         String buildType = args[2];
         Configure.getInstance().setBuildRootDir(buildRootDir);
@@ -48,7 +57,22 @@ public class ClassComputer {
             writeClassCache();
         } else if ("diffPatch".equals(action)) {
             computerDiffClases();
+        }else if ("buildPkg".equals(action)){
+            processDiffClassToApk(Configure.getInstance().getDiffClassesDir());
         }
+
+    }
+    public  static void  processDiffClassToApk(String patchClassDir){
+        File patchClassesDir=new File(patchClassDir);
+        File patchjar=new File(patchClassesDir.getAbsolutePath()+File.separator+"classes.jar");
+        File patchDex=new File(patchClassesDir.getAbsolutePath()+File.separator+"classes.dex");
+        ZipUtil.pack(patchClassesDir,patchjar);
+        String dxArgs[]=new String[]{"--dex","--output="+patchDex.getAbsolutePath(),patchjar.getAbsolutePath()};
+        Main.main(dxArgs);
+        File patchPkg=new File(patchClassesDir.getAbsolutePath()+File.separator+"patch.apk");
+      //  ZipEntrySource []zipEntrySources=new ZipEntrySource[1];
+        ZipUtil.packEntry(patchDex,patchPkg);
+
 
     }
 
