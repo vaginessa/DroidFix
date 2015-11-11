@@ -18,7 +18,7 @@
  * ZipConstants from android libcore.
  */
 
-package io.github.bunnyblue.droidfixcore.dexloader;
+package io.github.bunnyblue.droidfix.dexloader;
 
 import java.io.File;
 import java.io.IOException;

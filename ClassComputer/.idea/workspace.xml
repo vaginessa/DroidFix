@@ -7,15 +7,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6d3f3205-3db7-4d16-9033-dc6160fa3c6f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/io/github/bunnyblue/droidfix/AntilazyLoad.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/ClassComputer_jar.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/ClassComputer_jar.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/github/bunnyblue/droidfix/classcomputer/classes/ClassInject.java" afterPath="$PROJECT_DIR$/src/io/github/bunnyblue/droidfix/classcomputer/classes/ClassInject.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../build.gradle" afterPath="$PROJECT_DIR$/../build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../app/build.gradle" afterPath="$PROJECT_DIR$/../app/build.gradle" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../app/src/main/java/io/github/bunnyblue/droidfix/DroidApp.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../droidfixcore/src/main/java/io/github/bunnyblue/droidfixcore/READme.java" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/../droidfixcore/src/main/java/io/github/bunnyblue/droidfixcore/dexloader/MultiDex.java" afterPath="$PROJECT_DIR$/../droidfixcore/src/main/java/io/github/bunnyblue/droidfix/dexloader/DroidFix.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/../droidfixcore/src/main/java/io/github/bunnyblue/droidfixcore/dexloader/MultiDexExtractor.java" afterPath="$PROJECT_DIR$/../droidfixcore/src/main/java/io/github/bunnyblue/droidfix/dexloader/MultiDexExtractor.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/../droidfixcore/src/main/java/io/github/bunnyblue/droidfixcore/dexloader/ZipUtil.java" afterPath="$PROJECT_DIR$/../droidfixcore/src/main/java/io/github/bunnyblue/droidfix/dexloader/ZipUtil.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../app/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/../app/src/main/AndroidManifest.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../app/DroidPatch/classes.md5.txt" afterPath="$PROJECT_DIR$/../app/DroidPatch/classes.md5.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../app/DroidPatch/mapping.txt" afterPath="$PROJECT_DIR$/../app/DroidPatch/mapping.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../app/proguard-rules.pro" afterPath="$PROJECT_DIR$/../app/proguard-rules.pro" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../droidfixcore/proguard-rules.pro" afterPath="$PROJECT_DIR$/../droidfixcore/proguard-rules.pro" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="ClassComputer.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -631,12 +631,12 @@
       <created>1447152796640</created>
       <option name="number" value="Default" />
       <updated>1447152796640</updated>
-      <workItem from="1447152800082" duration="7026000" />
+      <workItem from="1447152800082" duration="7485000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="7026000" />
+    <option name="totallyTimeSpent" value="7485000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1280" height="717" extended-state="6" />

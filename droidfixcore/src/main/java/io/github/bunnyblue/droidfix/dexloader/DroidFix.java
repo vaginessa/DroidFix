@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package io.github.bunnyblue.droidfixcore.dexloader;
+package io.github.bunnyblue.droidfix.dexloader;
 
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.util.Log;
 
@@ -53,27 +51,20 @@ import dalvik.system.DexFile;
  * This library provides compatibility for platforms with API level 4 through 20. This library does
  * nothing on newer versions of the platform which provide built-in support for secondary dex files.
  */
-public final class MultiDex {
+public final class DroidFix {
 
-    static final String TAG = "MultiDex";
+    static final String TAG = "DroidFix";
 
-    private static final String OLD_SECONDARY_FOLDER_NAME = "secondary-dexes";
 
-    private static final String SECONDARY_FOLDER_NAME = "code_cache" + File.separator +
-        "secondary-dexes";
+    private static final String DROID_CODE_CACHE = ".DroidFix" + File.separator +
+        "code_cache";
 
-    private static final int MAX_SUPPORTED_SDK_VERSION = 20;
 
-    private static final int MIN_SDK_VERSION = 4;
-
-    private static final int VM_WITH_MULTIDEX_VERSION_MAJOR = 2;
-
-    private static final int VM_WITH_MULTIDEX_VERSION_MINOR = 1;
 
     private static final Set<String> installedApk = new HashSet<String>();
 
 
-    private MultiDex() {}
+    private DroidFix() {}
 
     /**
      * Patches the application context class loader by appending extra dex files
@@ -88,39 +79,19 @@ public final class MultiDex {
         Log.i(TAG, "install");
 
 
-        if (Build.VERSION.SDK_INT < MIN_SDK_VERSION) {
-            throw new RuntimeException("Multi dex installation failed. SDK " + Build.VERSION.SDK_INT
-                    + " is unsupported. Min SDK version is " + MIN_SDK_VERSION + ".");
-        }
 
         try {
-            ApplicationInfo applicationInfo = getApplicationInfo(context);
-            if (applicationInfo == null) {
-                // Looks like running on a test Context, so just return without patching.
-                return;
-            }
+
 
             synchronized (installedApk) {
+             ApplicationInfo applicationInfo=   context.getApplicationInfo();
                 String apkPath = applicationInfo.sourceDir;
                 if (installedApk.contains(apkPath)) {
                     return;
                 }
                 installedApk.add(apkPath);
 
-                if (Build.VERSION.SDK_INT > MAX_SUPPORTED_SDK_VERSION) {
-                    Log.w(TAG, "MultiDex is not guaranteed to work in SDK version "
-                            + Build.VERSION.SDK_INT + ": SDK version higher than "
-                            + MAX_SUPPORTED_SDK_VERSION + " should be backed by "
-                            + "runtime with built-in multidex capabilty but it's not the "
-                            + "case here: java.vm.version=\""
-                            + System.getProperty("java.vm.version") + "\"");
-                }
 
-                /* The patched class loader is expected to be a descendant of
-                 * dalvik.system.BaseDexClassLoader. We modify its
-                 * dalvik.system.DexPathList pathList field to append additional DEX
-                 * file entries.
-                 */
                 ClassLoader loader;
                 try {
                     loader = context.getClassLoader();
@@ -141,24 +112,18 @@ public final class MultiDex {
                     return;
                 }
 
-                try {
-                  clearOldDexDir(context);
-                } catch (Throwable t) {
-                  Log.w(TAG, "Something went wrong when trying to clear old MultiDex extraction, "
-                      + "continuing without cleaning.", t);
-                }
 
-                File dexDir = new File(applicationInfo.dataDir, SECONDARY_FOLDER_NAME);
+                File dexDir = new File(applicationInfo.dataDir, DROID_CODE_CACHE);
                 List<File> files = MultiDexExtractor.load(context, applicationInfo, dexDir, false);
                 if (checkValidZipFiles(files)) {
-                    installDex(loader, dexDir, files);
+                    installDex(loader, dexDir, files,false);
                 } else {
                     Log.w(TAG, "Files were not valid zip files.  Forcing a reload.");
                     // Try again, but this time force a reload of the zip file.
                     files = MultiDexExtractor.load(context, applicationInfo, dexDir, true);
 
                     if (checkValidZipFiles(files)) {
-                        installDex(loader, dexDir, files);
+                        installDex(loader, dexDir, files,false);
                     } else {
                         // Second time didn't work, give up
                         throw new RuntimeException("Zip files were not valid.");
@@ -173,45 +138,21 @@ public final class MultiDex {
         Log.i(TAG, "install done");
     }
 
-    private static ApplicationInfo getApplicationInfo(Context context)
-            throws NameNotFoundException {
-        PackageManager pm;
-        String packageName;
-        try {
-            pm = context.getPackageManager();
-            packageName = context.getPackageName();
-        } catch (RuntimeException e) {
-            /* Ignore those exceptions so that we don't break tests relying on Context like
-             * a android.test.mock.MockContext or a android.content.ContextWrapper with a null
-             * base Context.
-             */
-            Log.w(TAG, "Failure while trying to obtain ApplicationInfo from Context. " +
-                    "Must be running in test mode. Skip patching.", e);
-            return null;
-        }
-        if (pm == null || packageName == null) {
-            // This is most likely a mock context, so just return without patching.
-            return null;
-        }
-        ApplicationInfo applicationInfo =
-                pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
-        return applicationInfo;
-    }
 
 
-    private static void installDex(ClassLoader loader, File dexDir, List<File> files)
+    private static void installDex(ClassLoader loader, File dexDir, List<File> files,boolean isHotfix)
             throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException,
             InvocationTargetException, NoSuchMethodException, IOException, InstantiationException {
         if (!files.isEmpty()) {
             if (Build.VERSION.SDK_INT >= 23){
-                V23.install(loader, files, dexDir);
+                V23.install(loader, files, dexDir,isHotfix);
             }
             else if (Build.VERSION.SDK_INT >= 19) {
-                V19.install(loader, files, dexDir);
+                V19.install(loader, files, dexDir,isHotfix);
             } else if (Build.VERSION.SDK_INT >= 14) {
-                V14.install(loader, files, dexDir);
+                V14.install(loader, files, dexDir,isHotfix);
             } else {
-                V4.install(loader, files);
+                V4.install(loader, files,isHotfix);
             }
         }
     }
@@ -294,48 +235,29 @@ public final class MultiDex {
      * @param extraElements elements to append at the end of the array.
      */
     private static void expandFieldArray(Object instance, String fieldName,
-            Object[] extraElements) throws NoSuchFieldException, IllegalArgumentException,
+            Object[] extraElements ,boolean isHotfix) throws NoSuchFieldException, IllegalArgumentException,
             IllegalAccessException {
         Field jlrField = findField(instance, fieldName);
         Object[] original = (Object[]) jlrField.get(instance);
         Object[] combined = (Object[]) Array.newInstance(
                 original.getClass().getComponentType(), original.length + extraElements.length);
-//        System.arraycopy(original, 0, combined, 0, original.length);
-//        System.arraycopy(extraElements, 0, combined, original.length, extraElements.length);
-        System.arraycopy(extraElements, 0, combined, 0, extraElements.length);
-        System.arraycopy(original, 0, combined, extraElements.length, original.length);
+        if(isHotfix){
+            System.arraycopy(extraElements, 0, combined, 0, extraElements.length);
+            System.arraycopy(original, 0, combined, extraElements.length, original.length);
+        }else {
+            System.arraycopy(original, 0, combined, 0, original.length);
+            System.arraycopy(extraElements, 0, combined, original.length, extraElements.length);
+        }
+
+
         jlrField.set(instance, combined);
     }
 
-    private static void clearOldDexDir(Context context) throws Exception {
-        File dexDir = new File(context.getFilesDir(), OLD_SECONDARY_FOLDER_NAME);
-        if (dexDir.isDirectory()) {
-            Log.i(TAG, "Clearing old secondary dex dir (" + dexDir.getPath() + ").");
-            File[] files = dexDir.listFiles();
-            if (files == null) {
-                Log.w(TAG, "Failed to list secondary dex dir content (" + dexDir.getPath() + ").");
-                return;
-            }
-            for (File oldFile : files) {
-                Log.i(TAG, "Trying to delete old file " + oldFile.getPath() + " of size "
-                        + oldFile.length());
-                if (!oldFile.delete()) {
-                    Log.w(TAG, "Failed to delete old file " + oldFile.getPath());
-                } else {
-                    Log.i(TAG, "Deleted old file " + oldFile.getPath());
-                }
-            }
-            if (!dexDir.delete()) {
-                Log.w(TAG, "Failed to delete secondary dex dir " + dexDir.getPath());
-            } else {
-                Log.i(TAG, "Deleted old secondary dex dir " + dexDir.getPath());
-            }
-        }
-    }
+
     private static final class V23 {
 
         private static void install(ClassLoader loader, List<File> additionalClassPathEntries,
-                                    File optimizedDirectory)
+                                    File optimizedDirectory ,boolean isHotfix)
                 throws IllegalArgumentException, IllegalAccessException,
                 NoSuchFieldException, InvocationTargetException, NoSuchMethodException, InstantiationException {
 
@@ -349,7 +271,7 @@ public final class MultiDex {
             Object element = constructor.newInstance(new File(""), false, additionalClassPathEntries.get(0), dex);
             Object[] newEles=new Object[1];
             newEles[0]=element;
-            expandFieldArray(dexPathList, "dexElements",newEles);
+            expandFieldArray(dexPathList, "dexElements",newEles,isHotfix);
         }
 
     }
@@ -359,7 +281,7 @@ public final class MultiDex {
     private static final class V19 {
 
         private static void install(ClassLoader loader, List<File> additionalClassPathEntries,
-                File optimizedDirectory)
+                File optimizedDirectory,boolean isHotfix)
                         throws IllegalArgumentException, IllegalAccessException,
                         NoSuchFieldException, InvocationTargetException, NoSuchMethodException {
             /* The patched class loader is expected to be a descendant of
@@ -372,7 +294,7 @@ public final class MultiDex {
             ArrayList<IOException> suppressedExceptions = new ArrayList<IOException>();
             expandFieldArray(dexPathList, "dexElements", makeDexElements(dexPathList,
                     new ArrayList<File>(additionalClassPathEntries), optimizedDirectory,
-                    suppressedExceptions));
+                    suppressedExceptions),isHotfix);
             if (suppressedExceptions.size() > 0) {
                 for (IOException e : suppressedExceptions) {
                     Log.w(TAG, "Exception in makeDexElement", e);
@@ -424,7 +346,7 @@ public final class MultiDex {
     private static final class V14 {
 
         private static void install(ClassLoader loader, List<File> additionalClassPathEntries,
-                File optimizedDirectory)
+                File optimizedDirectory,boolean isHotfix)
                         throws IllegalArgumentException, IllegalAccessException,
                         NoSuchFieldException, InvocationTargetException, NoSuchMethodException {
             /* The patched class loader is expected to be a descendant of
@@ -435,7 +357,7 @@ public final class MultiDex {
             Field pathListField = findField(loader, "pathList");
             Object dexPathList = pathListField.get(loader);
             expandFieldArray(dexPathList, "dexElements", makeDexElements(dexPathList,
-                    new ArrayList<File>(additionalClassPathEntries), optimizedDirectory));
+                    new ArrayList<File>(additionalClassPathEntries), optimizedDirectory),isHotfix);
         }
 
         /**
@@ -457,7 +379,7 @@ public final class MultiDex {
      * Installer for platform versions 4 to 13.
      */
     private static final class V4 {
-        private static void install(ClassLoader loader, List<File> additionalClassPathEntries)
+        private static void install(ClassLoader loader, List<File> additionalClassPathEntries,boolean isHotfix)
                         throws IllegalArgumentException, IllegalAccessException,
                         NoSuchFieldException, IOException {
             /* The patched class loader is expected to be a descendant of
@@ -487,10 +409,10 @@ public final class MultiDex {
             }
 
             pathField.set(loader, path.toString());
-            expandFieldArray(loader, "mPaths", extraPaths);
-            expandFieldArray(loader, "mFiles", extraFiles);
-            expandFieldArray(loader, "mZips", extraZips);
-            expandFieldArray(loader, "mDexs", extraDexs);
+            expandFieldArray(loader, "mPaths", extraPaths,isHotfix);
+            expandFieldArray(loader, "mFiles", extraFiles,isHotfix);
+            expandFieldArray(loader, "mZips", extraZips,isHotfix);
+            expandFieldArray(loader, "mDexs", extraDexs,isHotfix);
         }
     }
 

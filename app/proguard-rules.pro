@@ -20,3 +20,4 @@
 }
 -keep class android.support.v7.widget.**{*;}
 -keep class android.support.design.widget.**{*;}
+-keep class io.github.bunnyblue.droidfix.dexloader.**{*;}

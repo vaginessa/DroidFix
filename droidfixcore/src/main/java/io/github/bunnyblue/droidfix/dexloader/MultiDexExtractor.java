@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.bunnyblue.droidfixcore.dexloader;
+package io.github.bunnyblue.droidfix.dexloader;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -45,23 +45,24 @@ import java.util.zip.ZipOutputStream;
  */
 final class MultiDexExtractor {
 
-    private static final String TAG = MultiDex.TAG;
+    private static final String TAG = DroidFix.TAG;
 
     /**
      * We look for additional dex files named {@code classes2.dex},
      * {@code classes3.dex}, etc.
      */
-    private static final String DEX_PREFIX = "classes";
-    private static final String DEX_SUFFIX = ".dex";
+    private static final String DEX_LAZY_LOAD_ASSET = "assets/antilazy.dex";
+    private static final String DEX_LAZY_LOAD = "antilazy.zip";
+   // private static final String DEX_SUFFIX = ".dex";
 
-    private static final String EXTRACTED_NAME_EXT = ".classes";
+  //  private static final String EXTRACTED_NAME_EXT = ".classes";
     private static final String EXTRACTED_SUFFIX = ".zip";
     private static final int MAX_EXTRACT_ATTEMPTS = 3;
 
-    private static final String PREFS_FILE = "multidex.version";
+    private static final String PREFS_FILE = "DroidFix";
     private static final String KEY_TIME_STAMP = "timestamp";
     private static final String KEY_CRC = "crc";
-    private static final String KEY_DEX_NUMBER = "dex.number";
+    //private static final String KEY_DEX_NUMBER = "dex.number";
 
     /**
      * Size of reading buffers.
@@ -85,8 +86,7 @@ final class MultiDexExtractor {
         final File sourceApk = new File(applicationInfo.sourceDir);
 
         long currentCrc = getZipCrc(sourceApk);
-
-        List<File> files;
+List<File> files;
         if (!forceReload && !isModified(context, sourceApk, currentCrc)) {
             try {
                 files = loadExistingExtractions(context, sourceApk, dexDir);
@@ -94,16 +94,16 @@ final class MultiDexExtractor {
                 Log.w(TAG, "Failed to reload existing extracted secondary dex files,"
                         + " falling back to fresh extraction", ioe);
                 files = performExtractions(sourceApk, dexDir);
-                putStoredApkInfo(context, getTimeStamp(sourceApk), currentCrc, files.size() + 1);
+                putStoredApkInfo(context, getTimeStamp(sourceApk), currentCrc);
 
             }
         } else {
             Log.i(TAG, "Detected that extraction must be performed.");
             files = performExtractions(sourceApk, dexDir);
-            putStoredApkInfo(context, getTimeStamp(sourceApk), currentCrc, files.size() + 1);
+            putStoredApkInfo(context, getTimeStamp(sourceApk), currentCrc);
         }
 
-        Log.i(TAG, "load found " + files.size() + " secondary dex files");
+        Log.i(TAG, "load found "  + " secondary dex files");
         return files;
     }
 
@@ -111,15 +111,15 @@ final class MultiDexExtractor {
             throws IOException {
         Log.i(TAG, "loading existing secondary dex files");
 
-        final String extractedFilePrefix = sourceApk.getName() + EXTRACTED_NAME_EXT;
-        int totalDexNumber = getMultiDexPreferences(context).getInt(KEY_DEX_NUMBER, 1);
-        final List<File> files = new ArrayList<File>(totalDexNumber);
+       // final String extractedFilePrefix = sourceApk.getName() + EXTRACTED_NAME_EXT;
+        //int totalDexNumber = getMultiDexPreferences(context).getInt(KEY_DEX_NUMBER, 1);
+     final List<File> files = new ArrayList<File>(1);
 
-        for (int secondaryNumber = 2; secondaryNumber <= totalDexNumber; secondaryNumber++) {
-            String fileName = extractedFilePrefix + secondaryNumber + EXTRACTED_SUFFIX;
-            File extractedFile = new File(dexDir, fileName);
+       // for (int secondaryNumber = 2; secondaryNumber <= totalDexNumber; secondaryNumber++) {
+           // String fileName = "assets/antilazy.dex";
+            File extractedFile = new File(dexDir, DEX_LAZY_LOAD);
             if (extractedFile.isFile()) {
-                files.add(extractedFile);
+               files.add(extractedFile);
                 if (!verifyZipFile(extractedFile)) {
                     Log.i(TAG, "Invalid zip file: " + extractedFile);
                     throw new IOException("Invalid ZIP file.");
@@ -128,7 +128,7 @@ final class MultiDexExtractor {
                 throw new IOException("Missing extracted secondary dex file '" +
                         extractedFile.getPath() + "'");
             }
-        }
+       // }
 
         return files;
     }
@@ -161,25 +161,25 @@ final class MultiDexExtractor {
     private static List<File> performExtractions(File sourceApk, File dexDir)
             throws IOException {
 
-        final String extractedFilePrefix = sourceApk.getName() + EXTRACTED_NAME_EXT;
+      //  final String extractedFilePrefix = sourceApk.getName() + EXTRACTED_NAME_EXT;
 
         // Ensure that whatever deletions happen in prepareDexDir only happen if the zip that
         // contains a secondary dex file in there is not consistent with the latest apk.  Otherwise,
         // multi-process race conditions can cause a crash loop where one process deletes the zip
         // while another had created it.
-        prepareDexDir(dexDir, extractedFilePrefix);
+        prepareDexDir(dexDir);
 
         List<File> files = new ArrayList<File>();
 
         final ZipFile apk = new ZipFile(sourceApk);
         try {
 
-            int secondaryNumber = 2;
-
-            ZipEntry dexFile = apk.getEntry(DEX_PREFIX + secondaryNumber + DEX_SUFFIX);
-            while (dexFile != null) {
-                String fileName = extractedFilePrefix + secondaryNumber + EXTRACTED_SUFFIX;
-                File extractedFile = new File(dexDir, fileName);
+          //  int secondaryNumber = 2;
+//
+            ZipEntry dexFile = apk.getEntry(DEX_LAZY_LOAD_ASSET);
+          //  while (dexFile != null) {
+               // String fileName = extractedFilePrefix + secondaryNumber + EXTRACTED_SUFFIX;
+                File extractedFile = new File(dexDir, DEX_LAZY_LOAD);
                 files.add(extractedFile);
 
                 Log.i(TAG, "Extraction is needed for file " + extractedFile);
@@ -190,7 +190,7 @@ final class MultiDexExtractor {
 
                     // Create a zip file (extractedFile) containing only the secondary dex file
                     // (dexFile) from the apk.
-                    extract(apk, dexFile, extractedFile, extractedFilePrefix);
+                    extract(apk, dexFile, extractedFile);
 
                     // Verify that the extracted file is indeed a zip file.
                     isExtractionSuccessful = verifyZipFile(extractedFile);
@@ -210,12 +210,11 @@ final class MultiDexExtractor {
                 }
                 if (!isExtractionSuccessful) {
                     throw new IOException("Could not create zip file " +
-                            extractedFile.getAbsolutePath() + " for secondary dex (" +
-                            secondaryNumber + ")");
+                            extractedFile.getAbsolutePath() + " for  droidfix");
                 }
-                secondaryNumber++;
-                dexFile = apk.getEntry(DEX_PREFIX + secondaryNumber + DEX_SUFFIX);
-            }
+
+              //  dexFile = apk.getEntry(DEX_PREFIX + secondaryNumber + DEX_SUFFIX);
+           // }
         } finally {
             try {
                 apk.close();
@@ -227,17 +226,12 @@ final class MultiDexExtractor {
         return files;
     }
 
-    private static void putStoredApkInfo(Context context, long timeStamp, long crc,
-            int totalDexNumber) {
+    private static void putStoredApkInfo(Context context, long timeStamp, long crc) {
         SharedPreferences prefs = getMultiDexPreferences(context);
         SharedPreferences.Editor edit = prefs.edit();
         edit.putLong(KEY_TIME_STAMP, timeStamp);
         edit.putLong(KEY_CRC, crc);
-        /* SharedPreferences.Editor doc says that apply() and commit() "atomically performs the
-         * requested modifications" it should be OK to rely on saving the dex files number (getting
-         * old number value would go along with old crc and time stamp).
-         */
-        edit.putInt(KEY_DEX_NUMBER, totalDexNumber);
+
         apply(edit);
     }
 
@@ -251,7 +245,7 @@ final class MultiDexExtractor {
     /**
      * This removes any files that do not have the correct prefix.
      */
-    private static void prepareDexDir(File dexDir, final String extractedFilePrefix)
+    private static void prepareDexDir(File dexDir)
             throws IOException {
         /* mkdirs() has some bugs, especially before jb-mr1 and we have only a maximum of one parent
          * to create, lets stick to mkdir().
@@ -265,7 +259,7 @@ final class MultiDexExtractor {
 
             @Override
             public boolean accept(File pathname) {
-                return !pathname.getName().startsWith(extractedFilePrefix);
+                return true;
             }
         };
         File[] files = dexDir.listFiles(filter);
@@ -302,12 +296,11 @@ final class MultiDexExtractor {
         }
     }
 
-    private static void extract(ZipFile apk, ZipEntry dexFile, File extractTo,
-            String extractedFilePrefix) throws IOException, FileNotFoundException {
+    private static void extract(ZipFile apk, ZipEntry dexFile, File extractTo) throws IOException, FileNotFoundException {
 
         InputStream in = apk.getInputStream(dexFile);
         ZipOutputStream out = null;
-        File tmp = File.createTempFile(extractedFilePrefix, EXTRACTED_SUFFIX,
+        File tmp = File.createTempFile("droidfix", EXTRACTED_SUFFIX,
                 extractTo.getParentFile());
         Log.i(TAG, "Extracting " + tmp.getPath());
         try {
