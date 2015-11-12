@@ -338,7 +338,9 @@ public static  void installPatch(Context context,File  patch){
             Method loadDex = findMethod(dexPathList, "loadDexFile", File.class, File.class);
             Object dex = loadDex.invoke(dexPathList, additionalClassPathEntries.get(0), optimizedDirectory);
             Constructor<?> constructor = elementType.getConstructor(File.class, boolean.class, File.class, DexFile.class);
+            constructor.setAccessible(true);
             Object element = constructor.newInstance(new File(""), false, additionalClassPathEntries.get(0), dex);
+
             Object[] newEles=new Object[1];
             newEles[0]=element;
             expandFieldArray(dexPathList, "dexElements",newEles,isHotfix);
