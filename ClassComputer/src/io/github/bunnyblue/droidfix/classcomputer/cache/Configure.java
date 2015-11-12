@@ -44,7 +44,8 @@ public class Configure {
     private	final  String classSrc = File.separator + "build" + File.separator + "intermediates" + File.separator+"transforms"+ File.separator
             + "CLASSES_and_RESOURCES" + File.separator + "FULL_PROJECT" + File.separator + "proguard" + File.separator;
     private	final  String classJar=File.separator + "build" + File.separator + "intermediates" + File.separator+"transforms"+ File.separator+"proguard"+File.separator;
-private  String proguardJarFolder;
+private  final  String classJar13=File.separator + "build" + File.separator + "intermediates" + File.separator +"classes-proguard"+File.separator;
+    private  String proguardJarFolder;
     private  String  proguardClassDir=null;
 
     public boolean isJar() {
@@ -52,6 +53,7 @@ private  String proguardJarFolder;
     }
 
     boolean isJar=true;
+    boolean isJar13=false;
 
     public String getPatchRootDir() {
         return getBuildRootDir()+File.separator+KEY_DROID_PATCH_DIR;
@@ -62,6 +64,10 @@ private  String proguardJarFolder;
         File test=new File(buildRootDir + classSrc+ buildType);
         if (test.isDirectory()){
             isJar=false;
+        }
+         test=new File(buildRootDir + classJar13+ buildType);
+        if (test.isDirectory()){
+            isJar13=true;
         }
 
     }
@@ -106,9 +112,12 @@ private  String proguardJarFolder;
 
     }
     public String getProguardJarFolder(){
-        if (proguardJarFolder==null)
+
+            if (isJar13){
+                return buildRootDir + classJar13+ buildType;
+            }
        return buildRootDir + classJar+ buildType+File.separator+"jars";
-        return  proguardJarFolder;
+
 
     }
     public void setProguardJarFolder(String proguardJarFolder){

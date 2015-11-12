@@ -116,6 +116,89 @@ gradle.taskGraph.beforeTask { Task task ->
 
         }
     }
+    //support 1.3
+    if ("app".equals(task.project.name)&&"proguardDebug".equals(task.name)&&useDebugFix)
+    {
+        task.doLast {
+            copy {
+                from buildDir.getAbsolutePath()+"/outputs/mapping/debug"
+                into projectDir.getAbsolutePath()+"/DroidPatch/"
+                include 'mapping.txt'
+            }
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "injectCode" ,projectDir.getAbsolutePath(),"debug"
+            }
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "cacheClassesTable" ,projectDir.getAbsolutePath(),"debug"
+            }
+
+
+        }
+    }else  if ("app".equals(task.project.name)&&"proguardRelease".equals(task.name)){
+
+        task.doLast {
+            copy {
+                from buildDir.getAbsolutePath() + "/outputs/mapping/release"
+                into projectDir.getAbsolutePath() + "/DroidPatch/"
+                include 'mapping.txt'
+            }
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "injectCode", projectDir.getAbsolutePath(), "release"
+            }
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "cacheClassesTable", projectDir.getAbsolutePath(), "release"
+            }
+
+        }
+    }else  if ("app".equals(task.project.name)&&"proguardDebugDroidFix".equals(task.name)){
+        task.doLast {
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "injectCode", projectDir.getAbsolutePath(), "debugDroidFix"
+            }
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "diffPatch", projectDir.getAbsolutePath(), "debugDroidFix"
+            }
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "buildPkg", projectDir.getAbsolutePath(),"patch"
+            }
+
+
+        }
+
+    }else  if ("app".equals(task.project.name)&&"proguardReleaseDroidFix".equals(task.name)){
+        task.doLast {
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "injectCode", projectDir.getAbsolutePath(), "releaseDroidFix"
+            }
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "diffPatch", projectDir.getAbsolutePath(), "releaseDroidFix"
+            }
+            javaexec {
+                classpath "$rootDir/ClassComputer.jar"
+                main = 'io.github.bunnyblue.droidfix.classcomputer.ClassComputer'
+                args "buildPkg", projectDir.getAbsolutePath(),"patch"
+            }
+
+        }
+    }
     //
 
 }
