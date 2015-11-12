@@ -6,14 +6,7 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6d3f3205-3db7-4d16-9033-dc6160fa3c6f" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ClassComputer.jar" afterPath="$PROJECT_DIR$/../ClassComputer.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/github/bunnyblue/droidfix/classcomputer/ClassComputer.java" afterPath="$PROJECT_DIR$/src/io/github/bunnyblue/droidfix/classcomputer/ClassComputer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/ClassComputer_jar.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/ClassComputer_jar.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../app/build.gradle" afterPath="$PROJECT_DIR$/../app/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="6d3f3205-3db7-4d16-9033-dc6160fa3c6f" name="Default" comment="" />
     <ignored path="ClassComputer.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -540,12 +533,12 @@
       <created>1447152796640</created>
       <option name="number" value="Default" />
       <updated>1447152796640</updated>
-      <workItem from="1447152800082" duration="11192000" />
+      <workItem from="1447152800082" duration="11430000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="11192000" />
+    <option name="totallyTimeSpent" value="11430000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1280" height="717" extended-state="6" />

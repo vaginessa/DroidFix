@@ -27,7 +27,11 @@
 
 package io.github.bunnyblue.droidfix;
 
-import android.os.Bundle;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.*;
+import android.os.Process;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -40,6 +44,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import java.io.File;
+import java.io.IOException;
+
+import io.github.bunnyblue.droidfix.dexloader.DroidFix;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -118,10 +127,34 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
+            startActivity(new Intent(MainActivity.this,BugActivity.class));
+
             Toast.makeText(MainActivity.this,"fixdebug" ,Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_send) {
+            File file =new File("/sdcard/patch.apk");
+            if (!file.exists()){
+                Toast.makeText(this, "file not found", Toast.LENGTH_SHORT).show();
+                return true;
+            }
 
+            File dest=new File(getApplicationInfo().dataDir, DroidFix.DROID_CODE_CACHE+File.separator+file.getName());
+            try {
+                DroidFix.copyFile(file,dest);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Toast.makeText(this, "补丁安装完毕,需要重启app", Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder=new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("安装安全补丁").setMessage("点击确定重启App").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();;
+                    android.os.Process.killProcess(Process.myPid());
+                }
+            });
+            builder.create().show();;
+           // DroidFix.installPatch(this, dest);
 
         }
 
