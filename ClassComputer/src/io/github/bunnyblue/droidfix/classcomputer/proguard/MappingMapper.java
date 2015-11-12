@@ -43,13 +43,14 @@ import java.util.List;
 import io.github.bunnyblue.droidfix.classcomputer.cache.Configure;
 import io.github.bunnyblue.droidfix.classcomputer.cache.HashUtil;
 import io.github.bunnyblue.droidfix.classcomputer.classes.ClassObject;
+import io.github.bunnyblue.droidfix.classcomputer.gradleImpl.GradleImpl15;
 import org.apache.commons.io.FileUtils;
 
 
 public class MappingMapper {
 
 
-    HashMap<String, String> hashtable=new HashMap<>();
+    HashMap<String, String> hashtable=new HashMap<String, String>();
     //	HashMap<K, V>
     public void  produce(String path) {
         try {
@@ -70,6 +71,48 @@ public class MappingMapper {
     }
 
     public ArrayList<ClassObject> processRawClasses() {
+        File pathRoot=new File(Configure.getInstance().getTransformedClassDir());
+        if (Configure.getInstance().isJar()){
+          return   processRawClassesJarFormat();
+        }else {
+          return   processRawClassesFolder();
+        }
+
+//      }
+
+    }
+     ArrayList<ClassObject> processRawClassesJarFormat() {
+         GradleImpl15.extract();
+        ArrayList<ClassObject> cacheClasses = new ArrayList<ClassObject>();
+        produce(Configure.getInstance().getPatchMapping());
+        File pathRoot=new File(Configure.getInstance().getTransformedClassDir());
+
+        Collection<File> clses=FileUtils.listFiles(pathRoot, new String[]{"class"}, true);
+        for (File file : clses) {
+            String path = file.getAbsolutePath();
+            String md5 = HashUtil.getClassMd5(path);
+
+
+            String tmp = "classes" + File.separator + "debug";
+            path = path.replaceAll(pathRoot.getAbsolutePath(), "");
+            path = path.substring(1, path.indexOf(".class"));
+            String classname = path.replaceAll(File.separator, ".");
+            ClassObject classObject = new ClassObject(md5, classname);
+            classObject.setProguardedClassName(hashtable.get(classname));
+            classObject.setLocalPath(file.getAbsolutePath());
+            cacheClasses.add(classObject);
+
+
+        }
+        int  index=0;
+        for (ClassObject file : cacheClasses) {
+            index++;
+            //System.out.println(file.toString()+index);
+        }
+        return cacheClasses;
+
+    }
+    private ArrayList<ClassObject> processRawClassesFolder() {
         ArrayList<ClassObject> cacheClasses = new ArrayList<ClassObject>();
         produce(Configure.getInstance().getPatchMapping());
         File pathRoot=new File(Configure.getInstance().getTransformedClassDir());

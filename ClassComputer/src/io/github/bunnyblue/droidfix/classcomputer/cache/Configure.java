@@ -41,8 +41,17 @@ public class Configure {
     // build/intermediates/transforms/CLASSES_and_RESOURCES/FULL_PROJECT/proguard/debug
     String buildType;// debug or release
     String buildRootDir;
-    private	String transformedClassDir = File.separator + "build" + File.separator + "intermediates" + File.separator+"transforms"+ File.separator
+    private	final  String classSrc = File.separator + "build" + File.separator + "intermediates" + File.separator+"transforms"+ File.separator
             + "CLASSES_and_RESOURCES" + File.separator + "FULL_PROJECT" + File.separator + "proguard" + File.separator;
+    private	final  String classJar=File.separator + "build" + File.separator + "intermediates" + File.separator+"transforms"+ File.separator+"proguard"+File.separator;
+private  String proguardJarFolder;
+    private  String  proguardClassDir=null;
+
+    public boolean isJar() {
+        return isJar;
+    }
+
+    boolean isJar=true;
 
     public String getPatchRootDir() {
         return getBuildRootDir()+File.separator+KEY_DROID_PATCH_DIR;
@@ -50,8 +59,13 @@ public class Configure {
     public void  init() {
         File dir=new File(getPatchRootDir());
         dir.mkdirs();
+        File test=new File(buildRootDir + classSrc+ buildType);
+        if (test.isDirectory()){
+            isJar=false;
+        }
 
     }
+
     public String getPatchClassMD5() {
         return getPatchRootDir()+File.separator+KEY_DROID_PATCH_CLASS_MD5;
     }
@@ -76,7 +90,7 @@ public class Configure {
 
     public void setBuildType(String buildType) {
         this.buildType = buildType;
-        transformedClassDir = transformedClassDir + buildType;
+      //  transformedClassDir = transformedClassDir ;
     }
 
     public static Configure getInstance() {
@@ -84,9 +98,29 @@ public class Configure {
     }
 
     public String getTransformedClassDir() {
-        return buildRootDir + transformedClassDir;
+        if (proguardClassDir!=null){
+            return proguardClassDir;
+        }
+
+        return buildRootDir + classSrc+ buildType;
 
     }
+    public String getProguardJarFolder(){
+        if (proguardJarFolder==null)
+       return buildRootDir + classJar+ buildType+File.separator+"jars";
+        return  proguardJarFolder;
+
+    }
+    public void setProguardJarFolder(String proguardJarFolder){
+        this.proguardJarFolder=proguardJarFolder;
+    }
+    public void setTransformedClassDir(String proguardClassDir){
+        this.proguardClassDir=proguardClassDir;
+    }
+//    public  String getGradleVersion(){
+//        return  "1.5.+";
+//    }
+
 
 
 }

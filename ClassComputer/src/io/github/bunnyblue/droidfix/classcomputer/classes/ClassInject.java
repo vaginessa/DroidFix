@@ -31,6 +31,7 @@ package io.github.bunnyblue.droidfix.classcomputer.classes;
  * Created by BunnyBlue on 11/11/15.
  */
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -43,6 +44,8 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.NotFoundException;
+import org.apache.commons.io.FileUtils;
+import org.zeroturnaround.zip.ZipUtil;
 
 public class ClassInject {
     public static String getConstructionCode() {
@@ -99,6 +102,21 @@ public class ClassInject {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+        }
+        if (Configure.getInstance().isJar()){
+            repackJar();//如果混淆后的是jar 先解压然后重新打包
+        }
+
+
+    }
+    private static void repackJar(){
+     File src= new File(Configure.getInstance().getTransformedClassDir());
+        File target= new File(Configure.getInstance().getTransformedClassDir()+".jar");
+        ZipUtil.pack(src,target);
+        try {
+            FileUtils.deleteDirectory(src);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
 
