@@ -34,6 +34,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -84,4 +85,20 @@ public class ZipUtil {
             out.write(buffer, 0, read);
         }
     }
+    public static File copyFile(File src, File dir) throws IOException {
+
+
+        File outFile = new File(dir, src.getName());
+        if (!outFile.exists()) {
+            outFile.getParentFile().mkdirs();
+
+            InputStream in = new FileInputStream(src);
+            OutputStream out = new FileOutputStream(outFile);
+            copyFile(in, out);
+            in.close();
+            out.close();
+        }
+        return outFile;
+    }
+
 }

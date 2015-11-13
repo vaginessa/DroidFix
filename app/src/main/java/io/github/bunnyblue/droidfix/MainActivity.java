@@ -27,13 +27,17 @@
 
 package io.github.bunnyblue.droidfix;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
+import android.content.pm.PackageManager;
+import android.os.*;
+import android.os.Process;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -52,6 +56,14 @@ import io.github.bunnyblue.droidfix.dexloader.ZipUtil;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (PackageManager.PERMISSION_DENIED==ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},123);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,23 +137,28 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
-
+            ;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (PackageManager.PERMISSION_DENIED==ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},123);
+            }
         } else if (id == R.id.nav_share) {
             startActivity(new Intent(MainActivity.this,BugActivity.class));
 
             Toast.makeText(MainActivity.this,"fixdebug" ,Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_send) {
-//            File file =new File(Environment.getExternalStorageDirectory(),"patch.dex");
-//            if (!file.exists()){
-//                Toast.makeText(this, "file not found", Toast.LENGTH_SHORT).show();
-//                return true;
-//            }
+            File file =new File(Environment.getExternalStorageDirectory(),"patch.apk");
+            if (!file.exists()){
+                Toast.makeText(this, "file not found", Toast.LENGTH_SHORT).show();
+                return true;
+            }
             final File sourceApk = new File(getApplicationInfo().sourceDir);
            // File dest=new File(getFilesDir(), DroidFix.DROID_CODE_CACHE);
             File dest= null;
             try {
-                dest = ZipUtil.copyAsset(this, "patch.apk", new File(getFilesDir(), DroidFix.DROID_CODE_CACHE));
+                //dest = ZipUtil.copyAsset(this, "patch.apk", new File(getFilesDir(), DroidFix.DROID_CODE_CACHE));
+                dest = ZipUtil.copyFile(file,new File(getFilesDir(), DroidFix.DROID_CODE_CACHE));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -164,7 +181,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();;
-                    android.os.Process.killProcess(android.os.Process.myPid());
+                    android.os.Process.killProcess(Process.myPid());
                 }
             });
             builder.create().show();;
