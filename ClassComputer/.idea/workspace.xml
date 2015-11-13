@@ -7,7 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6d3f3205-3db7-4d16-9033-dc6160fa3c6f" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/github/bunnyblue/droidfix/classcomputer/ClassComputer.java" afterPath="$PROJECT_DIR$/src/io/github/bunnyblue/droidfix/classcomputer/ClassComputer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../app/src/main/java/io/github/bunnyblue/droidfix/MainActivity.java" afterPath="$PROJECT_DIR$/../app/src/main/java/io/github/bunnyblue/droidfix/MainActivity.java" />
     </list>
     <ignored path="ClassComputer.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -79,7 +79,7 @@
         <entry file="file://$PROJECT_DIR$/src/io/github/bunnyblue/droidfix/classcomputer/ClassComputer.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.19847329">
-              <caret line="67" column="62" selection-start-line="67" selection-start-column="62" selection-end-line="67" selection-end-column="62" />
+              <caret line="67" column="60" selection-start-line="67" selection-start-column="47" selection-end-line="67" selection-end-column="60" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -680,12 +680,12 @@
       <workItem from="1447152800082" duration="11430000" />
       <workItem from="1447298863809" duration="5176000" />
       <workItem from="1447305497177" duration="5320000" />
-      <workItem from="1447312486469" duration="890000" />
+      <workItem from="1447312486469" duration="1518000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="22816000" />
+    <option name="totallyTimeSpent" value="23444000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1233,7 +1233,7 @@
     <entry file="file://$PROJECT_DIR$/src/io/github/bunnyblue/droidfix/classcomputer/ClassComputer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.19847329">
-          <caret line="67" column="62" selection-start-line="67" selection-start-column="62" selection-end-line="67" selection-end-column="62" />
+          <caret line="67" column="60" selection-start-line="67" selection-start-column="47" selection-end-line="67" selection-end-column="60" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

@@ -46,10 +46,9 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.zip.ZipFile;
 
 import io.github.bunnyblue.droidfix.dexloader.DroidFix;
-import io.github.bunnyblue.droidfix.dexloader.MultiDexExtractor;
+import io.github.bunnyblue.droidfix.dexloader.ZipUtil;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -139,13 +138,19 @@ public class MainActivity extends AppCompatActivity
 //                return true;
 //            }
             final File sourceApk = new File(getApplicationInfo().sourceDir);
-            File dest=new File(getFilesDir(), DroidFix.DROID_CODE_CACHE+File.separator+"patch.apk");
+           // File dest=new File(getFilesDir(), DroidFix.DROID_CODE_CACHE);
+            File dest= null;
             try {
-                ZipFile zipFile=new ZipFile(sourceApk);
-                MultiDexExtractor.extract(zipFile, zipFile.getEntry("assets/patch.dex"),dest);
+                dest = ZipUtil.copyAsset(this, "patch.apk", new File(getFilesDir(), DroidFix.DROID_CODE_CACHE));
             } catch (IOException e) {
                 e.printStackTrace();
             }
+//            try {
+//                ZipFile zipFile=new ZipFile(sourceApk);
+//                MultiDexExtractor.extract(zipFile, zipFile.getEntry("assets/patch.dex"),dest);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
 
 //            dest.getParentFile().mkdirs();
 //            try {

@@ -27,9 +27,7 @@
 
 package io.github.bunnyblue.droidfix.dexloader;
 
-import android.app.Application;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.util.Log;
 
@@ -139,76 +137,29 @@ if (output!=null)
         }
 
     }
-
-    /**
-     * Patches the application context class loader by appending extra dex files
-     * loaded from the application apk. This method should be called in the
-     * attachBaseContext of your {@link Application}, see
-     *
-     * @param context application context.
-     * @throws RuntimeException if an error occurred preventing the classloader
-     *         extension.
-     */
     public static void install(Context context) {
         Log.i(TAG, "install");
 
-
-
+        File dexDir = new File(context.getFilesDir(), DROID_CODE_CACHE);
         try {
-            synchronized (installedApk) {
-             ApplicationInfo applicationInfo=   context.getApplicationInfo();
-                String apkPath = applicationInfo.sourceDir;
-                if (installedApk.contains(apkPath)) {
-                    return;
-                }
-                installedApk.add(apkPath);
-                ClassLoader loader;
-                try {
-                    loader = context.getClassLoader();
-                } catch (RuntimeException e) {
-                    /* Ignore those exceptions so that we don't break tests relying on Context like
-                     * a android.test.mock.MockContext or a android.content.ContextWrapper with a
-                     * null base Context.
-                     */
-                    Log.w(TAG, "Failure while trying to obtain Context class loader. " +
-                            "Must be running in test mode. Skip patching.", e);
-                    return;
-                }
-                if (loader == null) {
-                    // Note, the context class loader is null when running Robolectric tests.
-                    Log.e(TAG,
-                            "Context class loader is null. Must be running in test mode. "
-                            + "Skip patching.");
-                    return;
-                }
-
-
-                File dexDir = new File(context.getFilesDir(), DROID_CODE_CACHE);
-                List<File> files = MultiDexExtractor.load(context, applicationInfo, dexDir, false);
-                if (checkValidZipFiles(files)) {
-                    installDex(loader, dexDir, files,false);
-                } else {
-                    Log.w(TAG, "Files were not valid zip files.  Forcing a reload.");
-                    // Try again, but this time force a reload of the zip file.
-                    files = MultiDexExtractor.load(context, applicationInfo, dexDir, true);
-
-                    if (checkValidZipFiles(files)) {
-                        installDex(loader, dexDir, files,false);
-                    } else {
-                        // Second time didn't work, give up
-                        throw new RuntimeException("Zip files were not valid.");
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            Log.e(TAG, "Multidex installation failure", e);
-            throw new RuntimeException("Multi dex installation failed (" + e.getMessage() + ").");
+         File shell=   ZipUtil.copyAsset(context, "shell.apk", dexDir);
+            ArrayList<File> files=new ArrayList<File>();
+            files.add(shell);
+            installDex(context.getClassLoader(), dexDir, files,false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
-        Log.i(TAG, "install done");
     }
-
-
 
     private static void installDex(ClassLoader loader, File dexDir, List<File> files,boolean isHotfix)
             throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException,
@@ -227,18 +178,7 @@ if (output!=null)
         }
     }
 
-    /**
-     * Returns whether all files in the list are valid zip files.  If {@code files} is empty, then
-     * returns true.
-     */
-    private static boolean checkValidZipFiles(List<File> files) {
-        for (File file : files) {
-            if (!MultiDexExtractor.verifyZipFile(file)) {
-                return false;
-            }
-        }
-        return true;
-    }
+
 
     /**
      * Locates a given field anywhere in the class inheritance hierarchy.
