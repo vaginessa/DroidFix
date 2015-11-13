@@ -54,7 +54,7 @@ import java.util.zip.ZipOutputStream;
  * Exposes application secondary dex files as files in the application data
  * directory.
  */
-final class MultiDexExtractor {
+public  final class MultiDexExtractor {
 
     private static final String TAG = DroidFix.TAG;
 
@@ -307,7 +307,7 @@ List<File> files;
         }
     }
 
-    private static void extract(ZipFile apk, ZipEntry dexFile, File extractTo) throws IOException, FileNotFoundException {
+    public static void extract(ZipFile apk, ZipEntry dexFile, File extractTo) throws IOException, FileNotFoundException {
 
         InputStream in = apk.getInputStream(dexFile);
         ZipOutputStream out = null;

@@ -71,7 +71,7 @@ public final class DroidFix {
     static final String TAG = "DroidFix";
 
 
-    public static final String DROID_CODE_CACHE = ".DroidFix" + File.separator +
+    public static final String DROID_CODE_CACHE = "DroidFix" + File.separator +
         "code_cache";
 
 
@@ -82,7 +82,7 @@ public final class DroidFix {
     private DroidFix() {}
 public static  void installPatch(Context context,File  patch){
 
-    File dexDir = new File(context.getApplicationInfo().dataDir, DROID_CODE_CACHE);
+    File dexDir = new File(context.getFilesDir(), DROID_CODE_CACHE);
     List<File> files = new ArrayList<File>();
     files.add(patch);
 
@@ -131,9 +131,9 @@ public static  void installPatch(Context context,File  patch){
             }
 
         } finally {
-
+if (input!=null)
             input.close();
-
+if (output!=null)
             output.close();
 
         }
@@ -183,7 +183,7 @@ public static  void installPatch(Context context,File  patch){
                 }
 
 
-                File dexDir = new File(applicationInfo.dataDir, DROID_CODE_CACHE);
+                File dexDir = new File(context.getFilesDir(), DROID_CODE_CACHE);
                 List<File> files = MultiDexExtractor.load(context, applicationInfo, dexDir, false);
                 if (checkValidZipFiles(files)) {
                     installDex(loader, dexDir, files,false);
@@ -335,8 +335,11 @@ public static  void installPatch(Context context,File  patch){
             Object dexPathList = pathListField.get(loader);
             Field dexElement = findField(dexPathList, "dexElements");
             Class<?> elementType = dexElement.getType().getComponentType();
+            //DexClassLoader dexClassLoader=new DexClassLoader(additionalClassPathEntries.get(0).getAbsolutePath(),optimizedDirectory.getAbsolutePath(),"",null);
             Method loadDex = findMethod(dexPathList, "loadDexFile", File.class, File.class);
-            Object dex = loadDex.invoke(dexPathList, additionalClassPathEntries.get(0), optimizedDirectory);
+            loadDex.setAccessible(true);
+
+            Object dex = loadDex.invoke(null, additionalClassPathEntries.get(0), optimizedDirectory);
             Constructor<?> constructor = elementType.getConstructor(File.class, boolean.class, File.class, DexFile.class);
             constructor.setAccessible(true);
             Object element = constructor.newInstance(new File(""), false, additionalClassPathEntries.get(0), dex);

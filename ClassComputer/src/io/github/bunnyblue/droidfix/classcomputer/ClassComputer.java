@@ -64,14 +64,14 @@ public class ClassComputer {
     }
     public  static void  processDiffClassToApk(String patchClassDir){
         File patchClassesDir=new File(patchClassDir);
-        File patchjar=new File(patchClassesDir.getAbsolutePath()+File.separator+"classes.jar");
-        File patchDex=new File(patchClassesDir.getAbsolutePath()+File.separator+"classes.dex");
+        File patchjar=new File(patchClassesDir.getParentFile().getAbsolutePath()+File.separator+"classes.jar");
+        File patchDex=new File(patchClassesDir.getParentFile().getAbsolutePath()+File.separator+"patch.apk");
         ZipUtil.pack(patchClassesDir,patchjar);
         String dxArgs[]=new String[]{"--dex","--output="+patchDex.getAbsolutePath(),patchjar.getAbsolutePath()};
         Main.main(dxArgs);
-        File patchPkg=new File(patchClassesDir.getAbsolutePath()+File.separator+"patch.apk");
-      //  ZipEntrySource []zipEntrySources=new ZipEntrySource[1];
-        ZipUtil.packEntry(patchDex,patchPkg);
+//        File patchPkg=new File(patchClassesDir.getAbsolutePath()+File.separator+"patch.apk");
+//      //  ZipEntrySource []zipEntrySources=new ZipEntrySource[1];
+//        ZipUtil.packEntry(patchDex,patchPkg);
 
 
     }

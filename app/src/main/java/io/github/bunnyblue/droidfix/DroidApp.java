@@ -50,7 +50,7 @@ public class DroidApp extends Application {
 //            return ;
 //        }
 
-        File dest=new File(getApplicationInfo().dataDir, DroidFix.DROID_CODE_CACHE+File.separator+"patch.apk");
+        File dest=new File(getFilesDir(), DroidFix.DROID_CODE_CACHE+File.separator+"patch.apk");
 //        try {
 //            DroidFix.copyFile(file,dest);
 //        } catch (IOException e) {

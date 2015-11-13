@@ -15,6 +15,7 @@ public class BugActivity extends AppCompatActivity {
         setContentView(R.layout.activity_bug);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+   // setTitle("BugFixed");
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
