@@ -59,11 +59,13 @@ public class ClassInject {
         MappingMapper mappingMapper = new MappingMapper();
         ArrayList<ClassObject> classObjects = mappingMapper.processRawClasses();
         try {
+           File cp= new File(Configure.getInstance().getTransformedClassDir());
+
             ClassPath mClassPath = ClassPool.getDefault()
-                    .appendClassPath(Configure.getInstance().getTransformedClassDir());
+                    .appendClassPath(cp.getAbsolutePath());
+            System.err.println("add classpath : "+Configure.getInstance().getTransformedClassDir()+cp.isDirectory());
             //System.err.println("update class "+Configure.getInstance().getTransformedClassDir());
         } catch (NotFoundException e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
         for (ClassObject classObject : classObjects) {
