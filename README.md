@@ -27,3 +27,7 @@ if (ClassVerifier.PREVENT_VERIFY) {
 # How
       1 正式包会生成一份缓存文件，里面记录了所有class文件的md5，还有一份mapping混淆文件。
       ２. 在后续的版本中使用-applymapping选项，应用正式版本的mapping文件，然后计算编译完成后的class文件的md5和正式版本进行比较，把不相同的class文件打包成补丁包。
+      
+      首先脚本开启proguard
+      然后运行assembleDebug或者release
+      然后修改代码 运行assembleDebugDroidFix 稍等会在app的DroidPatch产生apk补丁
