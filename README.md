@@ -31,3 +31,11 @@ if (ClassVerifier.PREVENT_VERIFY) {
       首先脚本开启proguard
       然后运行assembleDebug或者release
       然后修改代码 运行assembleDebugDroidFix 稍等会在app的DroidPatch产生apk补丁
+      
+# Android Support
+
+| Android version        | Status           | 
+| ------------- |:-------------:| 
+| Android 6.0      | tested | 
+| Android 5.0     | tested      |   
+| Android < 5.0 | tested     |   
