@@ -92,11 +92,13 @@ public class MappingMapper {
             String path = file.getAbsolutePath();
             String md5 = HashUtil.getClassMd5(path);
 
-
-            String tmp = "classes" + File.separator + "debug";
-            path = path.replaceAll(pathRoot.getAbsolutePath(), "");
+            path = path.substring(pathRoot.getAbsolutePath().length());
+           // path = path.replaceAll(pathRoot.getAbsolutePath(), "");
             path = path.substring(1, path.indexOf(".class"));
-            String classname = path.replaceAll(File.separator, ".");
+           // String classname = path.replaceAll(File.separator, ".");
+            String classname = File.separatorChar=='/'?
+                    path.replaceAll(File.separator, "."):path.replaceAll("\\\\", "/");
+
             ClassObject classObject = new ClassObject(md5, classname);
             classObject.setProguardedClassName(hashtable.get(classname));
             classObject.setLocalPath(file.getAbsolutePath());
@@ -123,10 +125,14 @@ public class MappingMapper {
             String md5 = HashUtil.getClassMd5(path);
 
 
-            String tmp = "classes" + File.separator + "debug";
-            path = path.replaceAll(pathRoot.getAbsolutePath(), "");
+            path = path.substring(pathRoot.getAbsolutePath().length());
+                   // .replaceAll(pathRoot.getAbsolutePath(), "");
+
             path = path.substring(1, path.indexOf(".class"));
-            String classname = path.replaceAll(File.separator, ".");
+
+            String classname = File.separatorChar=='/'?
+                    path.replaceAll(File.separator, "."):path.replaceAll("\\\\", ".");
+
             ClassObject classObject = new ClassObject(md5, classname);
             classObject.setProguardedClassName(hashtable.get(classname));
             classObject.setLocalPath(file.getAbsolutePath());
