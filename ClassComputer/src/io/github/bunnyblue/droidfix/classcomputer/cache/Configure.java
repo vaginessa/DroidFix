@@ -41,10 +41,10 @@ public class Configure {
     // build/intermediates/transforms/CLASSES_and_RESOURCES/FULL_PROJECT/proguard/debug
     String buildType;// debug or release
     String buildRootDir;
-    private	final  String classSrc = File.separator + "build" + File.separator + "intermediates" + File.separator+"transforms"+ File.separator
-            + "CLASSES_and_RESOURCES" + File.separator + "FULL_PROJECT" + File.separator + "proguard" + File.separator;
-    private	final  String classJar=File.separator + "build" + File.separator + "intermediates" + File.separator+"transforms"+ File.separator+"proguard"+File.separator;
-private  final  String classJar13=File.separator + "build" + File.separator + "intermediates" + File.separator +"classes-proguard"+File.separator;
+    private	final  String classSrc = "/" + "build" + "/" + "intermediates" + "/"+"transforms"+ "/"
+            + "CLASSES_and_RESOURCES" + "/" + "FULL_PROJECT" + "/" + "proguard" + "/";
+    private	final  String classJar="/" + "build" + "/" + "intermediates" + "/"+"transforms"+ "/"+"proguard"+"/";
+private  final  String classJar13="/" + "build" + "/" + "intermediates" + "/" +"classes-proguard"+"/";
     private  String proguardJarFolder;
     private  String  proguardClassDir=null;
 
@@ -56,7 +56,7 @@ private  final  String classJar13=File.separator + "build" + File.separator + "i
     boolean isJar13=false;
 
     public String getPatchRootDir() {
-        return getBuildRootDir()+File.separator+KEY_DROID_PATCH_DIR;
+        return getBuildRootDir()+"/"+KEY_DROID_PATCH_DIR;
     }
     public void  init() {
         File dir=new File(getPatchRootDir());
@@ -73,14 +73,14 @@ private  final  String classJar13=File.separator + "build" + File.separator + "i
     }
 
     public String getPatchClassMD5() {
-        return getPatchRootDir()+File.separator+KEY_DROID_PATCH_CLASS_MD5;
+        return getPatchRootDir()+"/"+KEY_DROID_PATCH_CLASS_MD5;
     }
     public String getDiffClassesDir() {
-        return getPatchRootDir()+ File.separator+KEY_DROID_PATCH_CLASSES_DIR;
+        return getPatchRootDir()+ "/"+KEY_DROID_PATCH_CLASSES_DIR;
     }
 
     public String getPatchMapping() {
-        return getPatchRootDir()+File.separator+KEY_DROID_PATCH_MAPPING_FILE_NAME;
+        return getPatchRootDir()+"/"+KEY_DROID_PATCH_MAPPING_FILE_NAME;
     }
     public String getBuildRootDir() {
         return buildRootDir;
@@ -116,7 +116,7 @@ private  final  String classJar13=File.separator + "build" + File.separator + "i
             if (isJar13){
                 return buildRootDir + classJar13+ buildType;
             }
-       return buildRootDir + classJar+ buildType+File.separator+"jars";
+       return buildRootDir + classJar+ buildType+"/"+"jars";
 
 
     }

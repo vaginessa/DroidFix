@@ -43,6 +43,18 @@ import java.util.zip.ZipEntry;
  * Created by BunnyBlue on 11/10/15.
  */
 public class ClassComputer {
+    public  static  void main2(String[]args){
+        Configure.getInstance().setBuildRootDir("E:/DroidFix/app");
+        Configure.getInstance().setBuildType("debug");
+        Configure.getInstance().init();
+
+
+        ClassInject.injectConstructionClasses();
+        MappingMapper mappingMapper = new MappingMapper();
+        mappingMapper.processRawClasses();
+        mappingMapper.writeNewClassCache(mappingMapper.processRawClasses());
+
+    }
     public static void main(String[] args) {
         String action = args[0];
 

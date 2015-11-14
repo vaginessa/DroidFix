@@ -35,7 +35,7 @@ public class ClassObject   implements Comparable<ClassObject>{
     public ClassObject(String md5, String className) {
         super();
         this.md5 = md5;
-        this.className = className;
+        this.className = className.replaceAll("\\\\",".").replaceAll("/",".");
     }
     String  md5;
     String  injectedMD5;

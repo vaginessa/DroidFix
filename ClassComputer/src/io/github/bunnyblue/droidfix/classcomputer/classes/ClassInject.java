@@ -62,15 +62,18 @@ public class ClassInject {
            File cp= new File(Configure.getInstance().getTransformedClassDir());
 
             ClassPath mClassPath = ClassPool.getDefault()
-                    .appendClassPath(cp.getAbsolutePath());
-            System.err.println("add classpath : "+Configure.getInstance().getTransformedClassDir()+cp.isDirectory());
+                    .insertClassPath(cp.getAbsolutePath().replaceAll("\\\\","/"));
+
+            System.err.println("add classpath : "+mClassPath.toString());
             //System.err.println("update class "+Configure.getInstance().getTransformedClassDir());
         } catch (NotFoundException e1) {
             e1.printStackTrace();
         }
         for (ClassObject classObject : classObjects) {
             try {
+                System.err.println("getClassName"+classObject.getClassName());
                 CtClass ctClass = ClassPool.getDefault().get(classObject.getClassName());
+
                 CtConstructor conts[] = ctClass.getDeclaredConstructors();
                 if (conts==null||conts.length==0) {
                     CtConstructor ctConstructor = new CtConstructor(new CtClass[]{}, ctClass);
