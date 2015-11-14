@@ -71,7 +71,7 @@ public class ClassInject {
         }
         for (ClassObject classObject : classObjects) {
             try {
-                System.err.println("getClassName"+classObject.getClassName());
+               // System.err.println("getClassName"+classObject.getClassName());
                 CtClass ctClass = ClassPool.getDefault().get(classObject.getClassName());
 
                 CtConstructor conts[] = ctClass.getDeclaredConstructors();
