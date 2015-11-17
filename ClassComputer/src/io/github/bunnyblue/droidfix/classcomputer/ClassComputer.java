@@ -30,30 +30,64 @@ package io.github.bunnyblue.droidfix.classcomputer;
 import com.android.dx.command.Main;
 import io.github.bunnyblue.droidfix.classcomputer.cache.Configure;
 import io.github.bunnyblue.droidfix.classcomputer.classes.ClassInject;
+import io.github.bunnyblue.droidfix.classcomputer.classes.ClassObject;
 import io.github.bunnyblue.droidfix.classcomputer.proguard.MappingMapper;
+import org.apache.commons.io.FileUtils;
 import org.zeroturnaround.zip.ZipEntrySource;
 import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 
 /**
  * Created by BunnyBlue on 11/10/15.
  */
 public class ClassComputer {
-    public  static  void main2(String[]args){
-        Configure.getInstance().setBuildRootDir("E:/DroidFix/app");
-        Configure.getInstance().setBuildType("debug");
-        Configure.getInstance().init();
 
 
-        ClassInject.injectConstructionClasses();
-        MappingMapper mappingMapper = new MappingMapper();
-        mappingMapper.processRawClasses();
-        mappingMapper.writeNewClassCache(mappingMapper.processRawClasses());
+//    public static void main(String[] args) {
+//        Configure.getInstance().setBuildRootDir("E:/DroidFix/app");
+//        Configure.getInstance().setBuildType("debug");
+//        Configure.getInstance().init();
+//        ArrayList<ClassObject> diffClasses=new ArrayList<ClassObject>();
+//        ClassObject classObject=new ClassObject("233","io.test");
+//        diffClasses.add(classObject);
+//        copyDiffClasses(diffClasses,Configure.getInstance().getBuildRootDir());
+//
+//
+//
+//
+ //   }
+    public static void copyDiffClasses(ArrayList<ClassObject> diffClasses, String rootPath) {
 
+        for (ClassObject classObject : diffClasses) {
+            classObject.getClassName().replaceAll(".", "/");
+
+            String subPath=classObject.getClassName().replaceAll("\\.","/");
+            if ( subPath.lastIndexOf("/")!=-1) {
+                subPath=subPath.substring(0, subPath.lastIndexOf("/"));
+                subPath=rootPath+"/"+subPath;
+                subPath=subPath.replaceAll("\\\\","/");
+                File subDir=new File(subPath);
+                subDir.mkdirs();
+                File localClass=new File(classObject.getLocalPath());
+                try {
+                    FileUtils.copyFileToDirectory(localClass, subDir);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                System.err.println("Copy diff class "+localClass.getAbsolutePath());
+
+
+
+            }
+
+
+        }
     }
     public static void main(String[] args) {
         String action = args[0];

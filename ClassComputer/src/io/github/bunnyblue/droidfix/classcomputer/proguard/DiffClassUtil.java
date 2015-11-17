@@ -50,11 +50,13 @@ public class DiffClassUtil {
         }
         rootDir.mkdirs();
         for (ClassObject classObject : diffClasses) {
-            classObject.getClassName().replaceAll(".", File.separator);
-            String subPath=classObject.getClassName().replaceAll("\\.", File.separator);
-            if ( subPath.lastIndexOf(File.separator)!=-1) {
-                subPath=subPath.substring(0, subPath.lastIndexOf(File.separator));
-                subPath=rootPath+File.separator+subPath;
+            classObject.getClassName().replaceAll(".", "/");
+
+            String subPath=classObject.getClassName().replaceAll("\\.","/");
+            if ( subPath.lastIndexOf("/")!=-1) {
+                subPath=subPath.substring(0, subPath.lastIndexOf("/"));
+                subPath=rootPath+"/"+subPath;
+                subPath=subPath.replaceAll("\\\\","/");
                 File subDir=new File(subPath);
                 subDir.mkdirs();
                 File localClass=new File(classObject.getLocalPath());
