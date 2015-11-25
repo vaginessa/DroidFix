@@ -49,7 +49,7 @@ import org.zeroturnaround.zip.ZipUtil;
 
 public class ClassInject {
     public static String getConstructionCode() {
-        String insert = "if (io.github.bunnyblue.droidfix.ClassVerifier.CLASS_ISPREVERIFIED) {\n"
+        String insert = "if (java.lang.Boolean.FALSE.booleanValue()) {\n"
                 + "			System.out.println(io.github.bunnyblue.droidfix.AntilazyLoad.class);\n" + "		}";
         return insert;
 
